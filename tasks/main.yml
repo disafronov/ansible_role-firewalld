@@ -18,8 +18,7 @@
   notify: (Re)start firewalld service
 
 - name: Install firewall packages
-  become: true
-  package:
+  ansible.builtin.package:
     name:
       - firewalld
       - python3-firewall
