@@ -1,1 +1,3 @@
-# ansible_role-template
+# ansible_role-firewalld
+
+Install & configure firewalld.

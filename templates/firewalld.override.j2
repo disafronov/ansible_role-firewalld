@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+
+[Service]
+ExecStartPost=-/usr/bin/firewall-cmd --permanent --zone=trusted --add-interface=lo
+ExecStartPost=-/usr/bin/firewall-cmd --permanent --add-port={{ ansible_port | default('22') }}/tcp
+ExecStartPost=-/usr/bin/firewall-cmd --reload
