@@ -2,5 +2,11 @@
 
 [Service]
 ExecStartPost=-/usr/bin/firewall-cmd --permanent --zone=trusted --add-interface=lo
-ExecStartPost=-/usr/bin/firewall-cmd --permanent --add-port={{ ansible_port | default('22') }}/tcp
+
+{% if ansible_port is defined and ansible_port | int > 0 and ansible_port != 22 %}
+ExecStartPost=-/bin/sh -c 'for ZONE in $(firewall-cmd --get-zones); do if [ $ZONE != "block" -a $ZONE != "drop" -a $ZONE != "trusted" ]; then firewall-cmd --zone=$ZONE --permanent --add-port={{ ansible_port }}/tcp > /dev/null 2>&1 ; fi; done'
+{% else %}
+ExecStartPost=-/bin/sh -c 'for ZONE in $(firewall-cmd --get-zones); do if [ $ZONE != "block" -a $ZONE != "drop" -a $ZONE != "trusted" ]; then firewall-cmd --zone=$ZONE --permanent --add-service=ssh > /dev/null 2>&1 ; fi; done'
+{% endif %}
+
 ExecStartPost=-/usr/bin/firewall-cmd --reload
