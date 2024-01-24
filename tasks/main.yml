@@ -23,3 +23,43 @@
       - firewalld
       - python3-firewall
     state: present
+
+- name: FirewallD input services
+  ansible.posix.firewalld:
+    zone: "{{ item.zone }}"
+    service: "{{ item.service }}"
+    state: "{{ item.state | default('enabled') }}"
+    permanent: true
+    immediate: true
+  with_items: "{{ firewalld.input.services | default([]) }}"
+
+- name: FirewallD input ports
+  ansible.posix.firewalld:
+    zone: "{{ item.zone }}"
+    port: "{{ item.port }}"
+    state: "{{ item.state | default('enabled') }}"
+    permanent: true
+    immediate: true
+  with_items: "{{ firewalld.input.ports | default([]) }}"
+
+- name: FirewallD port forward
+  ansible.posix.firewalld:
+    port_forward:
+      - port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+        toaddr: "{{ item.toaddr | default('') }}"
+        toport: "{{ item.toport | default(item.port) }}"
+    zone: "{{ item.zone }}"
+    state: "{{ item.state | default('enabled') }}"
+    permanent: true
+    immediate: true
+  with_items: "{{ firewalld.forward_ports | default([]) }}"
+
+- name: FirewallD interfaces
+  ansible.posix.firewalld:
+    zone: "{{ item.zone }}"
+    interface: "{{ item.interface }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items: "{{ firewalld.interfaces | default([]) }}"
