@@ -1,6 +1,9 @@
 {{ ansible_managed | comment }}
 
 [Service]
+Restart=on-failure
+RestartSec=10s
+
 ExecStartPost=-/usr/bin/firewall-cmd --permanent --zone=trusted --add-interface=lo
 
 {% if ansible_port is defined and ansible_port | int > 0 and ansible_port | int != 22 %}
